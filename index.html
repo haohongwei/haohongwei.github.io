@@ -20,6 +20,14 @@
         <input type="button" value="我是一个按钮" οnclick=javascrtpt:jump()>
       </body>
       <script>
+          function waitForBridge() {
+            if (window.postMessage.length !== 1){
+                setTimeout(waitForBridge, 200);
+            }else {
+                window.postMessage('abc');
+            }
+        }
+        window.onload = waitForBridge;
         function jump(){
             // var jsonObj = {};//构造与react-native端通信的对象
             // jsonObj.type = 'file';
