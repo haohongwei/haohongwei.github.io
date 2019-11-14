@@ -10,12 +10,23 @@
             <li><a href="https://github.com/haohongwei">HomePage</a></td>
             <li><a href="https://www.jianshu.com/u/a3ae8888a19a">简书</a></td>
         </li>
-        <h2>面试准备</h2>
+        <h2>IOS</h2>
         <p>需要看的文章列表</p>
             <ul>
                 <li><a href="https://awesome-tips.github.io/zhuanti-01/">知识小集</a></td>
                 <li><a href="https://www.jianshu.com/u/a3ae8888a19a">简书</a></td>
             </li>
         <img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016111501.png"/>
+        <script>
+            function jump(){
+                var jsonObj = {};//构造与react-native端通信的对象
+                jsonObj.type = 'file';
+                jsonObj.id = '111';
+                jsonObj.name='111';
+                var jsonString = JSON.stringify(jsonObj);
+                window.postMessage(jsonString,'*');
+            }
+        </script>
+        <input type="button" value="我是一个按钮" οnclick=javascrtpt:jump()>
       </body>
 </html>
