@@ -15,7 +15,8 @@
             };
             window.onload = function () {
                 window.document.addEventListener('message', function (RnData) {
-                    alert(RnData.data)
+                    var rnData = JSON.parse(RnData.data)
+                    alert(rnData)
                     // message = msg.data;
                 });
             }
