@@ -2,12 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <!-- <link href="task001.css"  rel="stylesheet" type="text/css"/> -->
+        <link href="task001.css"  rel="stylesheet" type="text/css"/>
         <script>
-            // setTimeout(function () {
-            //   window.ReactNativeWebView.postMessage("Hello!")
-            // }, 2000);
-            // setTimeout(jump, 2000);
             function copyText(){
                 // var jsonObj = {};//构造与react-native端通信的对象
                 // jsonObj.type = 'file';
@@ -17,6 +13,12 @@
                 alert('你点击了我');
                 window.ReactNativeWebView.postMessage("Hello!11");
             };
+            window.onload = function () {
+                window.document.addEventListener('message', function (RnData) {
+                    alert(RnData.data)
+                    // message = msg.data;
+                });
+            }
           </script>
     </head>
     <body>
