@@ -41,5 +41,244 @@
             </li>
         <img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016111501.png"/>
         <button onclick="copyText()">复制文本</button>
+        <p>
+            The order of initialization is as follows: 
+            - All initializers in any framework you link to. 
+            - All +load methods in your image. 
+            - All C++ static initializers and C/C++ __attribute__(constructor) functions in your image.
+            - All initializers in frameworks that link to you. All +load methods in your image.
+
+            1. Objective C类的+load方法
+            2. C++ static initializer
+            3. C/C++ __attribute__(constructor) functions 
+            4. 动态库中的上面三种方法
+
+            获取所有的+load方法
+
+            __objc_nlclslist
+
+            __objc_nlcatlist
+
+            获取C++的静态初始化方法
+
+            MachOView 打开一个MachO文件，多数情况下会看到这个section __mod_init_func 。
+
+            有哪些方法可以产生Initializer？
+            1. __attribute((constructor))
+            gcc为函数提供了几种类型的属性，其中包含：构造函数(constructors)和析构函数(destructors)。
+
+            程序员应当使用类似下面的方式来指定这些属性：
+
+                static void start(void) __attribute__ ((constructor));
+                static void stop(void) __attribute__ ((destructor));
+            带有"构造函数"属性的函数将在main()函数之前被执行，而声明为"析构函数"属性的函数则将在main()退出时执行。
+
+            __attribute__((constructor)) void myentry(){
+                NSLog(@"constructor");
+            }
+            2. 全局变量的初始化需要执行代码
+            这里主要是对于C++来说（或者Objective C++）源文件扩展名是.cpp .cxx 或.mm 。这里说的全局变量包括static修饰的作用域仅在当前文件的，也包括不被static修饰的。
+
+
+            新建section字段，初始化的时候设置相关的字段
+
+            （关于 Facebook 的段 FBInjectable 的含义，可以参考文章 https://everettjf.github.io/2016/08/20/facebook-explore-section-fbinjectable ）
+
+            那么如何创建FBInjectable段呢？
+
+            可以使用 __attribute((used,section(“segmentname,sectionname”))) 关键字把某个变量的放入特殊的section中。
+
+
+            __objc_nlclslist 和 __objc_nlcatlist 等段中存储着所有有+load的类和类别，获取他们的相关方法，并进行替换
+
+
+            TCP要经历SYN，SYN/ACK，ACK三次握手的1.5个RTT
+
+            https://baijiahao.baidu.com/s?id=1654225744653405133&wfr=spider&for=pc
+
+            TCP的三次握手（Three-Way Handshake）
+            1.”三次握手”的详解
+            所谓的三次握手即TCP连接的建立。这个连接必须是一方主动打开，另一方被动打开的。以下为客户端主动发起连接的图解：
+
+            握手之前主动打开连接的客户端结束CLOSED阶段，被动打开的服务器端也结束CLOSED阶段，并进入LISTEN阶段。随后开始“三次握手”：
+            （1）首先客户端向服务器端发送一段TCP报文，其中：
+            标记位为SYN，表示“请求建立新连接”;
+            序号为Seq=X（X一般为1）；
+            随后客户端进入SYN-SENT阶段。
+            （2）服务器端接收到来自客户端的TCP报文之后，结束LISTEN阶段。并返回一段TCP报文，其中：
+            标志位为SYN和ACK，表示“确认客户端的报文Seq序号有效，服务器能正常接收客户端发送的数据，并同意创建新连接”（即告诉客户端，服务器收到了你的数据）；
+            序号为Seq=y；
+            确认号为Ack=x+1，表示收到客户端的序号Seq并将其值加1作为自己确认号Ack的值；随后服务器端进入SYN-RCVD阶段。
+            （3）客户端接收到来自服务器端的确认收到数据的TCP报文之后，明确了从客户端到服务器的数据传输是正常的，结束SYN-SENT阶段。并返回最后一段TCP报文。其中：
+            标志位为ACK，表示“确认收到服务器端同意连接的信号”（即告诉服务器，我知道你收到我发的数据了）；
+            序号为Seq=x+1，表示收到服务器端的确认号Ack，并将其值作为自己的序号值；
+            确认号为Ack=y+1，表示收到服务器端序号Seq，并将其值加1作为自己的确认号Ack的值；
+            随后客户端进入ESTABLISHED阶段。
+            服务器收到来自客户端的“确认收到服务器数据”的TCP报文之后，明确了从服务器到客户端的数据传输是正常的。结束SYN-SENT阶段，进入ESTABLISHED阶段。
+            在客户端与服务器端传输的TCP报文中，双方的确认号Ack和序号Seq的值，都是在彼此Ack和Seq值的基础上进行计算的，这样做保证了TCP报文传输的连贯性。一旦出现某一方发出的TCP报文丢失，便无法继续"握手"，以此确保了"三次握手"的顺利完成。
+            此后客户端和服务器端进行正常的数据传输。这就是“三次握手”的过程。
+            2.“三次握手”的动态过程
+
+            3.“三次握手”的通俗理解
+
+            个栗子：把客户端比作男孩，服务器比作女孩。用他们的交往来说明“三次握手”过程：
+            （1）男孩喜欢女孩，于是写了一封信告诉女孩：我爱你，请和我交往吧！;写完信之后，男孩焦急地等待，因为不知道信能否顺利传达给女孩。
+            （2）女孩收到男孩的情书后，心花怒放，原来我们是两情相悦呀！于是给男孩写了一封回信：我收到你的情书了，也明白了你的心意，其实，我也喜欢你！我愿意和你交往！;
+            写完信之后，女孩也焦急地等待，因为不知道回信能否能顺利传达给男孩。
+            （3）男孩收到回信之后很开心，因为发出的情书女孩收到了，并且从回信中知道了女孩喜欢自己，并且愿意和自己交往。然后男孩又写了一封信告诉女孩：你的心意和信我都收到了，谢谢你，还有我爱你！
+            女孩收到男孩的回信之后，也很开心，因为发出的情书男孩收到了。由此男孩女孩双方都知道了彼此的心意，之后就快乐地交流起来了~~
+            这就是通俗版的“三次握手”，期间一共往来了三封信也就是“三次握手”，以此确认两个方向上的数据传输通道是否正常。
+
+            TLS（Transport Layer Security，即传输层安全性协议）需要经过握手和密钥交换2个RTT
+
+
+            因此，SSL/TLS协议的基本过程是这样的：
+            （1） 客户端向服务器端索要并验证公钥。
+            （2） 双方协商生成"对话密钥"。
+            （3） 双方采用"对话密钥"进行加密通信。
+            上面过程的前两步，又称为"握手阶段"（handshake）。
+            四、握手阶段的详细过程
+
+            "握手阶段"涉及四次通信，我们一个个来看。需要注意的是，"握手阶段"的所有通信都是明文的。
+            4.1 客户端发出请求（ClientHello）
+            首先，客户端（通常是浏览器）先向服务器发出加密通信的请求，这被叫做ClientHello请求。
+            在这一步，客户端主要向服务器提供以下信息。
+            （1） 支持的协议版本，比如TLS 1.0版。
+            （2） 一个客户端生成的随机数，稍后用于生成"对话密钥"。
+            （3） 支持的加密方法，比如RSA公钥加密。
+            （4） 支持的压缩方法。
+            这里需要注意的是，客户端发送的信息之中不包括服务器的域名。也就是说，理论上服务器只能包含一个网站，否则会分不清应该向客户端提供哪一个网站的数字证书。这就是为什么通常一台服务器只能有一张数字证书的原因。
+            对于虚拟主机的用户来说，这当然很不方便。2006年，TLS协议加入了一个Server Name Indication扩展，允许客户端向服务器提供它所请求的域名。
+            4.2 服务器回应（SeverHello）
+            服务器收到客户端请求后，向客户端发出回应，这叫做SeverHello。服务器的回应包含以下内容。
+            （1） 确认使用的加密通信协议版本，比如TLS 1.0版本。如果浏览器与服务器支持的版本不一致，服务器关闭加密通信。
+            （2） 一个服务器生成的随机数，稍后用于生成"对话密钥"。
+            （3） 确认使用的加密方法，比如RSA公钥加密。
+            （4） 服务器证书。
+            除了上面这些信息，如果服务器需要确认客户端的身份，就会再包含一项请求，要求客户端提供"客户端证书"。比如，金融机构往往只允许认证客户连入自己的网络，就会向正式客户提供USB密钥，里面就包含了一张客户端证书。
+            4.3 客户端回应
+            客户端收到服务器回应以后，首先验证服务器证书。如果证书不是可信机构颁布、或者证书中的域名与实际域名不一致、或者证书已经过期，就会向访问者显示一个警告，由其选择是否还要继续通信。
+            如果证书没有问题，客户端就会从证书中取出服务器的公钥。然后，向服务器发送下面三项信息。
+            （1） 一个随机数。该随机数用服务器公钥加密，防止被窃听。
+            （2） 编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送。
+            （3） 客户端握手结束通知，表示客户端的握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供服务器校验。
+            上面第一项的随机数，是整个握手阶段出现的第三个随机数，又称"pre-master key"。有了它以后，客户端和服务器就同时有了三个随机数，接着双方就用事先商定的加密方法，各自生成本次会话所用的同一把"会话密钥"。
+            至于为什么一定要用三个随机数，来生成"会话密钥"，dog250解释得很好：
+            "不管是客户端还是服务器，都需要随机数，这样生成的密钥才不会每次都一样。由于SSL协议中证书是静态的，因此十分有必要引入一种随机因素来保证协商出来的密钥的随机性。
+            对于RSA密钥交换算法来说，pre-master-key本身就是一个随机数，再加上hello消息中的随机，三个随机数通过一个密钥导出器最终导出一个对称密钥。
+            pre master的存在在于SSL协议不信任每个主机都能产生完全随机的随机数，如果随机数不随机，那么pre master secret就有可能被猜出来，那么仅适用pre master secret作为密钥就不合适了，因此必须引入新的随机因素，那么客户端和服务器加上pre master secret三个随机数一同生成的密钥就不容易被猜出了，一个伪随机可能完全不随机，可是是三个伪随机就十分接近随机了，每增加一个自由度，随机性增加的可不是一。"
+            此外，如果前一步，服务器要求客户端证书，客户端会在这一步发送证书及相关信息。
+            4.4 服务器的最后回应
+            服务器收到客户端的第三个随机数pre-master key之后，计算生成本次会话所用的"会话密钥"。然后，向客户端最后发送下面信息。
+            （1）编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送。
+            （2）服务器握手结束通知，表示服务器的握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供客户端校验。
+            至此，整个握手阶段全部结束。接下来，客户端与服务器进入加密通信，就完全是使用普通的HTTP协议，只不过用"会话密钥"加密内容。
+
+
+            TLS的连接优化
+            TLS的连接优化，需要服务端和客户端都需要支持，共同完成优化手段，包括Session Resumption和False Start。
+
+            在iOS上Crash最终都是通过signal的形式发送给应用，应用可以通过注册signal handler来选择处理或忽略大部分信号。
+            signal是一个4字节的整形数字，在iOS/OSX中定义了31个已知的信号；
+            crash仅仅是singal触发的一个行为。signal的用途/产生包括但不限于：
+            • 显式调用kill,killpg触发signal
+            • 改变子进程的状态
+            • 致命性中断
+            • job控制
+            • timer过期
+            • 各种通知，如cpu resource limit或file size limit等
+            signal会导致以下几种行为(action)：
+
+            • Terminate 杀死进程
+            • Dump core 杀死进程并创建一个core file
+            • Stop 暂停进程
+            • Continue 恢复进程
+            • Ignore 忽略/丢弃该信号
+
+
+            基于 Clang SanitizerCoverage 的方案
+
+            在 Clang 10 documentation 中可以看到 LLVM 官方对 SanitizerCoverage 的详细介绍，包含了示例代码。
+            简单来说 SanitizerCoverage 是 Clang 内置的一个代码覆盖工具。它把一系列以 __sanitizer_cov_trace_pc_ 为前缀的函数调用插入到用户定义的函数里，借此实现了全局 AOP 的大杀器。其覆盖之广，包含 Swift/Objective-C/C/C++ 等语言，Method/Function/Block 全支持。
+            开启 SanitizerCoverage 的方法是：在 build settings 里的 “Other C Flags” 中添加 -fsanitize-coverage=func,trace-pc-guard。如果含有 Swift 代码的话，还需要在 “Other Swift Flags” 中加入 -sanitize-coverage=func 和 -sanitize=undefined。所有链接到 App 中的二进制都需要开启 SanitizerCoverage，这样才能完全覆盖到所有调用。
+            基于 Clang SanitizerCoverage 我写了个工具 AppOrderFiles。CocoaPods 接入，一行调用生成 Order File。啥也不说了，全在 GayHub 里了：https://github.com/yulingtianxia/AppOrderFiles
+            当然这也不完全是我的原创，对照着 Clang 文档的同时，还参考了 Improving App Performance with Order Files 这篇文章的代码。人家这篇文章虽然早就给出了，不过还是有一些 bug 和优化空间的。
+
+            URL注册方案，Mediator方案以及Protocol注册方案
+
+
+            要想做工程架构首先要对代码有追求，DRY和Kiss这个两个原理相信大家对有所接触。
+            DRY即Don’t repeat yourself，也就是不要在工程内复制粘贴；
+            Kiss即Keep It Simple，Stupid，架构设计不是为了追求炫酷和复杂度而是要让工程架构更简洁易懂，隐藏复杂的细节提供易用的API。
+
+            六大设计原则Solid原则，是针对面向对象的程序设计提出的，即使在反思面向对象一些问题的现在，这一原则内的很多东西也有很重要的参考意义。
+            单一功能原则，不要考虑在模块内实现与它不相关的功能，比如在一个类中既要处理string MD5又要处理图片的解压缩，这就是明显的违反单一功能原则的例子。再往细说，其实在方法内也不应该处理过多的事情。
+            开闭原则，设计模块时要考虑对扩展开发对修改封闭，简单理解就是提炼不变的逻辑，将稳定的部分封装成模块的核心逻辑，对可扩展的部分进行注入。
+            里氏替换原则，指的是所有的子类都可以替换父类，但是一般情况下我们是不会通过子类去破坏父类的逻辑。
+            接口隔离原则，对于client应该隐藏不需要的细节，隔离这些部分不去依赖它们，使API的依赖更加简洁。
+            依赖反转原则，指的是高层次的模块不应依赖低层次的模块，个人认为这是个伪命题，因为高层次的模块一旦依赖低层次的模块，那它就不是高层次的模块了。如果高层次模块确实需要依赖某些东西的时候，所依赖的东西应该是抽象的。
+            最少知识原则，开发人员在使用模块的时候，对该模块知道的越少才越好。
+            这六大原则其实翻来覆去都是在讲两件事情，一个是易理解的API设计，另一个是建立合理依赖关系。
+
+            一般会将各个子系统划分为相对独立的模块，通过中介者模式收敛交互代码，把模块间交互部分进行集中封装, 所有模块间调用均通过中介者来做
+
+            MVC
+
+            代理模式
+
+            观察者模式
+            发布-订阅
+
+            单例模式
+
+            策略模式
+            策略模式定义了一系列的算法，并将每一个算法封装起来，而且使它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。
+
+
+            中介者模式
+            用一个中介对象来封装一系列的对象交互。中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。
+
+            迭代器模式
+
+            命令模式
+            将一个请求封装为一个对象，从而使你可用不同的请求对客户进行参数化；对请求排队或记录请求日志，以及支持可取消的操作。请求对象将一或多个动作绑定在特定的接收者上。命令模式将发出请求的对象和接收及执行请求的对象区分开来。
+            NSInvocation
+
+            职责链模式
+            事件传递
+
+            工厂方法模式
+            定义一个用于创建对象的接口，让子类决定实例化哪一个类。Factory Method 使一个类的实例化延迟到其子类。
+
+            该阶段各个时期的任务以及优化方法：
+
+            阶段	工作	优化
+            Load dylibs	Dyld从主执行文件的header获取到需要加载的所依赖动态库列表，然后它需要找到每个 dylib，而应用所依赖的 dylib 文件可能会再依赖其他 dylib，所以所需要加载的是动态库列表一个递归依赖的集合	
+
+            1.尽量不使用内嵌（embedded）的dylib，加载内嵌dylib性能开销较大；
+            2.合并已有的dylib和使用静态库（static archives），减少dylib的使用个数；
+            3.懒加载dylib，但是要注意dlopen()可能造成一些问题，且实际上懒加载做的工作会更多
+
+            Rebase和Bind	
+            1. Rebase在Image内部调整指针的指向。在过去，会把动态库加载到指定地址，所有指针和数据对于代码都是对的，而现在地址空间布局是随机化，所以需要在原来的地址根据随机的偏移量做一下修正。
+            2. Bind是把指针正确地指向Image外部的内容。这些指向外部的指针被符号(symbol)名称绑定，dyld需要去符号表里查找，找到symbol对应的实现	1.减少ObjC类（class）、方法（selector）、分类（category）的数量；2.减少C++虚函数的的数量（创建虚函数表有开销）；3.使用Swift structs（内部做了优化，符号数量更少）
+
+            Objc setup	
+            1.注册Objc类 (class registration)；
+            2.把category的定义插入方法列表 (category registration)；
+            3.保证每一个selector唯一 (selector uniquing)	减少 Objective-C Class、Selector、Category 的数量，可以合并或者删减一些OC类
+
+            Initializers	
+            1.Objc的+load()函数；
+            2.C++的构造函数属性函数；
+            3.非基本类型的C++静态全局变量的创建(通常是类或结构体)	
+            1.少在类的+load方法里做事情，尽量把这些事情推迟到+initiailize；
+            2.减少构造器函数个数，在构造器函数里少做些事情；
+            3.减少C++静态全局变量的个数
+
+            对于pre-main阶段，Xcode提供了各个阶段时间消耗的方法， Product -> Scheme -> Edit Scheme -> Environment Variables 中将环境变量 DYLD_PRINT_STATISTICS设为1;
+
+            单例需要重写的东西，alloc=》allocWithZone，copy=》copywithzone，mutablecopy=》mutuablecopywithzone
+        </p>
       </body>
 </html>
