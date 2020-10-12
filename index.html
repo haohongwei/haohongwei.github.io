@@ -41,17 +41,17 @@
             </li>
         <img src="http://www.ruanyifeng.com/blogimg/asset/2016/bg2016111501.png"/>
         <button onclick="copyText()">复制文本</button>
-        <p>
-            The order of initialization is as follows: 
-            - All initializers in any framework you link to. 
-            - All +load methods in your image. 
-            - All C++ static initializers and C/C++ __attribute__(constructor) functions in your image.
-            - All initializers in frameworks that link to you. All +load methods in your image.
+        <p style="WORD-BREAK: break-all; WORD-WRAP: break-word"> 
+            The order of initialization is as follows: <br>
+            - All initializers in any framework you link to. <br>
+            - All +load methods in your image. <br>
+            - All C++ static initializers and C/C++ __attribute__(constructor) functions in your image.<br>
+            - All initializers in frameworks that link to you. All +load methods in your image.<br>
 
-            1. Objective C类的+load方法
-            2. C++ static initializer
-            3. C/C++ __attribute__(constructor) functions 
-            4. 动态库中的上面三种方法
+            1. Objective C类的+load方法<br>
+            2. C++ static initializer<br>
+            3. C/C++ __attribute__(constructor) functions <br>
+            4. 动态库中的上面三种方法<br>
 
             获取所有的+load方法
 
